@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Призначені замовлення · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Виконавець</h3>
+            <a href="{{ url_for('worker_dashboard') }}">Огляд</a>
+            <a href="{{ url_for('worker_profile') }}">Профіль</a>
+            <a href="{{ url_for('worker_available_orders') }}">Доступні заявки</a>
+            <a class="active" href="{{ url_for('worker_assigned_orders') }}">Призначені</a>
+            <a href="{{ url_for('worker_history') }}">Історія</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Призначені</div><h1>Мої замовлення</h1></div></div>
+            <form class="filter-bar" method="get">
+                <label>Фільтр
+                    <select name="mode">
+                        <option value="active" {% if mode == 'active' %}selected{% endif %}>Активні</option>
+                        <option value="work" {% if mode == 'work' %}selected{% endif %}>В роботі</option>
+                        <option value="done" {% if mode == 'done' %}selected{% endif %}>Завершені</option>
+                        <option value="all" {% if mode == 'all' %}selected{% endif %}>Усі</option>
+                    </select>
+                </label>
+                <button class="btn btn-primary" type="submit">Показати</button>
+            </form>
+            <div class="table-card mt-lg">
+                <table>
+                    <thead><tr><th>ID</th><th>Клієнт</th><th>Послуга</th><th>Дата</th><th>Статус</th><th>Ціна</th><th></th></tr></thead>
+                    <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.client_name }}</td>
+                            <td>{{ order.category_name }} · {{ order.service_name }}</td>
+                            <td>{{ format_datetime(order.preferred_at) }}</td>
+                            <td><span class="status-pill status-{{ status_class(order.status) }}">{{ order.status }}</span></td>
+                            <td>{{ money(order.final_price or order.estimated_price) }}</td>
+                            <td><a href="{{ url_for('worker_order_detail', order_id=order.id) }}">Деталі</a></td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="7" class="muted center">Замовлень немає.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

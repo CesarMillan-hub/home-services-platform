@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Редагувати прайс' if price else 'Новий прайс' }} · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container narrow">
+        <div class="section-head"><div><div class="eyebrow">Прайс</div><h1>{{ 'Редагувати прайс' if price else 'Новий прайс' }}</h1></div><a class="btn btn-outline" href="{{ url_for('admin_prices') }}">Назад</a></div>
+        <form class="card form-card" method="post">
+            <label>Послуга
+                <select name="service_id" required>
+                    {% for service in services %}<option value="{{ service.id }}" {% if price and price.service_id == service.id %}selected{% endif %}>{{ service.category_name }} · {{ service.name }}</option>{% endfor %}
+                </select>
+            </label>
+            <div class="form-grid two">
+                <label>Базова ціна<input type="number" step="0.01" name="base_price" value="{{ price.base_price if price else '0' }}" required></label>
+                <label>Ціна за одиницю<input type="number" step="0.01" name="unit_price" value="{{ price.unit_price if price else '0' }}" required></label>
+                <label>Назва одиниці<input type="text" name="unit_name" value="{{ price.unit_name if price else 'од.' }}" required></label>
+                <label>Ціна дод. опції<input type="number" step="0.01" name="extra_option_price" value="{{ price.extra_option_price if price else '0' }}"></label>
+                <label>Множник терміновості<input type="number" step="0.01" min="1" name="urgent_multiplier" value="{{ price.urgent_multiplier if price else '1' }}"></label>
+            </div>
+            <label class="check-line"><input type="checkbox" name="is_active" value="1" {% if not price or price.is_active %}checked{% endif %}> Активний</label>
+            <button class="btn btn-primary" type="submit">Зберегти</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

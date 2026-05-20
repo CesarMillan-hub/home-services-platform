@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Кабінет виконавця · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Виконавець</h3>
+            <a class="active" href="{{ url_for('worker_dashboard') }}">Огляд</a>
+            <a href="{{ url_for('worker_profile') }}">Профіль</a>
+            <a href="{{ url_for('worker_available_orders') }}">Доступні заявки</a>
+            <a href="{{ url_for('worker_assigned_orders') }}">Призначені</a>
+            <a href="{{ url_for('worker_history') }}">Історія</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head">
+                <div>
+                    <div class="eyebrow">Кабінет виконавця</div>
+                    <h1>{{ current_user.full_name }}</h1>
+                    <p class="muted">Спеціалізація: {{ spec_label(current_user.specialization) }} · {{ current_user.service_area or 'зона не вказана' }}</p>
+                </div>
+                <a class="btn btn-primary" href="{{ url_for('worker_available_orders') }}">Доступні заявки</a>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card"><strong>{{ stats.available }}</strong><span>доступні</span></div>
+                <div class="stat-card"><strong>{{ stats.active }}</strong><span>у роботі</span></div>
+                <div class="stat-card"><strong>{{ stats.done }}</strong><span>виконані</span></div>
+            </div>
+            <div class="card mt-lg">
+                <div class="card-head">
+                    <h2>Найближчі призначені</h2>
+                    <a class="link-arrow" href="{{ url_for('worker_assigned_orders') }}">Усі →</a>
+                </div>
+                <div class="table-card embedded">
+                    <table>
+                        <thead><tr><th>ID</th><th>Клієнт</th><th>Послуга</th><th>Дата</th><th>Статус</th><th></th></tr></thead>
+                        <tbody>
+                        {% for order in assigned %}
+                            <tr>
+                                <td>#{{ order.id }}</td>
+                                <td>{{ order.client_name }}</td>
+                                <td>{{ order.service_name }}</td>
+                                <td>{{ format_datetime(order.preferred_at) }}</td>
+                                <td><span class="status-pill status-{{ status_class(order.status) }}">{{ order.status }}</span></td>
+                                <td><a href="{{ url_for('worker_order_detail', order_id=order.id) }}">Деталі</a></td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="6" class="muted center">Активних призначень немає.</td></tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

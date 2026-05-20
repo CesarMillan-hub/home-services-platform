@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}Створити замовлення · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Клієнт</h3>
+            <a href="{{ url_for('client_dashboard') }}">Огляд</a>
+            <a href="{{ url_for('client_profile') }}">Профіль</a>
+            <a class="active" href="{{ url_for('client_create_order') }}">Створити замовлення</a>
+            <a href="{{ url_for('client_orders') }}">Мої замовлення</a>
+            <a href="{{ url_for('client_reviews') }}">Відгуки</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head">
+                <div>
+                    <div class="eyebrow">Нове замовлення</div>
+                    <h1>Створити заявку</h1>
+                </div>
+            </div>
+            <form class="card form-card" method="post" enctype="multipart/form-data" data-order-form data-price-url="{{ url_for('price_preview') }}">
+                <h2>1. Послуга</h2>
+                <div class="form-grid two">
+                    <label>Категорія
+                        <select name="category_id" id="category_id" required data-category-select>
+                            <option value="">—</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" data-slug="{{ category.slug }}" {% if form.get('category_id') == category.id|string %}selected{% endif %}>{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>Підпослуга
+                        <select name="service_id" id="service_id" required data-service-select>
+                            <option value="">—</option>
+                            {% for service in services %}
+                                <option value="{{ service.id }}" data-category="{{ service.category_id }}" data-slug="{{ service.category_slug }}" {% if form.get('service_id') == service.id|string %}selected{% endif %}>{{ service.category_name }} · {{ service.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
+
+                <h2>2. Адреса і час</h2>
+                <div class="form-grid four">
+                    <label>Місто
+                        <input type="text" name="city" value="{{ form.get('city', current_user.city or '') }}" required>
+                    </label>
+                    <label>Вулиця
+                        <input type="text" name="street" value="{{ form.get('street', '') }}" required>
+                    </label>
+                    <label>Будинок
+                        <input type="text" name="building" value="{{ form.get('building', '') }}" required>
+                    </label>
+                    <label>Квартира
+                        <input type="text" name="apartment" value="{{ form.get('apartment', '') }}">
+                    </label>
+                    <label class="wide">Дата і час
+                        <input type="datetime-local" name="preferred_at" value="{{ form.get('preferred_at', '') }}" required>
+                    </label>
+                </div>
+                <label>Опис / коментар клієнта
+                    <textarea name="description" rows="4">{{ form.get('description', '') }}</textarea>
+                </label>
+
+                <h2>3. Параметри ціни</h2>
+                <div class="category-section panel" data-category-section="cleaning">
+                    <h3>Клінінг</h3>
+                    <div class="form-grid two">
+                        <label>Площа, м²
+                            <input type="number" step="0.1" min="1" name="cleaning_area" value="{{ form.get('cleaning_area', '') }}">
+                        </label>
+                        <label>Кількість кімнат
+                            <input type="number" min="1" name="rooms" value="{{ form.get('rooms', '') }}">
+                        </label>
+                    </div>
+                    <div class="checkbox-grid">
+                        <label><input type="checkbox" name="extra_options" value="Миття вікон"> Миття вікон</label>
+                        <label><input type="checkbox" name="extra_options" value="Холодильник"> Холодильник</label>
+                        <label><input type="checkbox" name="extra_options" value="Прасування"> Прасування</label>
+                    </div>
+                </div>
+                <div class="category-section panel" data-category-section="repair">
+                    <h3>Ремонт</h3>
+                    <div class="form-grid two">
+                        <label>Тип роботи
+                            <input type="text" name="repair_type" value="{{ form.get('repair_type', '') }}">
+                        </label>
+                        <label>Орієнтовно годин
+                            <input type="number" step="0.5" min="0.5" name="repair_hours" value="{{ form.get('repair_hours', '') }}">
+                        </label>
+                        <label>Терміновість
+                            <select name="urgency">
+                                <option value="normal" {% if form.get('urgency', 'normal') == 'normal' %}selected{% endif %}>Звичайно</option>
+                                <option value="urgent" {% if form.get('urgency') == 'urgent' %}selected{% endif %}>Терміново</option>
+                            </select>
+                        </label>
+                        <label>Фото проблеми
+                            <input type="file" name="photo" accept="image/png,image/jpeg,image/webp">
+                        </label>
+                    </div>
+                </div>
+                <div class="category-section panel" data-category-section="delivery">
+                    <h3>Доставка</h3>
+                    <div class="form-grid two">
+                        <label>Звідки
+                            <input type="text" name="delivery_from" value="{{ form.get('delivery_from', '') }}">
+                        </label>
+                        <label>Куди
+                            <input type="text" name="delivery_to" value="{{ form.get('delivery_to', '') }}">
+                        </label>
+                        <label>Відстань, км
+                            <input type="number" step="0.1" min="0.1" name="delivery_distance_km" value="{{ form.get('delivery_distance_km', '') }}">
+                        </label>
+                        <label>Вага, кг
+                            <input type="number" step="0.1" min="0" name="weight" value="{{ form.get('weight', '') }}">
+                        </label>
+                        <label class="wide">Габарити
+                            <input type="text" name="dimensions" value="{{ form.get('dimensions', '') }}">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="price-preview" data-price-preview>
+                    <strong>Орієнтовна вартість:</strong>
+                    <span data-price-output>—</span>
+                    <ul data-price-details></ul>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-outline" type="button" data-price-button>Розрахувати</button>
+                    <button class="btn btn-primary" type="submit">Створити замовлення</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

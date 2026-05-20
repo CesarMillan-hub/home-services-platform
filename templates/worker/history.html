@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Історія виконань · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Виконавець</h3>
+            <a href="{{ url_for('worker_dashboard') }}">Огляд</a>
+            <a href="{{ url_for('worker_profile') }}">Профіль</a>
+            <a href="{{ url_for('worker_available_orders') }}">Доступні заявки</a>
+            <a href="{{ url_for('worker_assigned_orders') }}">Призначені</a>
+            <a class="active" href="{{ url_for('worker_history') }}">Історія</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Історія</div><h1>Виконані та скасовані замовлення</h1></div></div>
+            <div class="cards-grid two">
+                {% for order in orders %}
+                    <article class="card order-card">
+                        <div class="card-head"><h3>#{{ order.id }} · {{ order.service_name }}</h3><span class="status-pill status-{{ status_class(order.status) }}">{{ order.status }}</span></div>
+                        <p class="muted">{{ order.client_name }} · {{ format_datetime(order.updated_at) }}</p>
+                        <div class="price-line"><span>Сума</span><strong>{{ money(order.final_price or order.estimated_price) }}</strong></div>
+                        {% if order.rating %}<div class="stars">{{ '★' * order.rating }}{{ '☆' * (5 - order.rating) }}</div><p>{{ order.review_text }}</p>{% endif %}
+                        <a class="btn btn-outline" href="{{ url_for('worker_order_detail', order_id=order.id) }}">Деталі</a>
+                    </article>
+                {% else %}
+                    <div class="empty-state">Історія поки порожня.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Мої відгуки · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Клієнт</h3>
+            <a href="{{ url_for('client_dashboard') }}">Огляд</a>
+            <a href="{{ url_for('client_profile') }}">Профіль</a>
+            <a href="{{ url_for('client_create_order') }}">Створити замовлення</a>
+            <a href="{{ url_for('client_orders') }}">Мої замовлення</a>
+            <a class="active" href="{{ url_for('client_reviews') }}">Відгуки</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Відгуки</div><h1>Мої оцінки</h1></div></div>
+            <div class="cards-grid two">
+                {% for review in reviews %}
+                    <article class="card review-card">
+                        <div class="stars">{{ '★' * review.rating }}{{ '☆' * (5 - review.rating) }}</div>
+                        <p>{{ review.text }}</p>
+                        <small>Замовлення #{{ review.order_number }} · {{ review.service_name }} · {{ review.worker_name or 'виконавець не вказаний' }}</small>
+                    </article>
+                {% else %}
+                    <div class="empty-state">Ви ще не залишали відгуки.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

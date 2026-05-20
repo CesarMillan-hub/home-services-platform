@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Відгуки · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Адмін</h3>
+            <a href="{{ url_for('admin_dashboard') }}">Дашборд</a>
+            <a href="{{ url_for('admin_orders') }}">Замовлення</a>
+            <a href="{{ url_for('admin_users') }}">Користувачі</a>
+            <a href="{{ url_for('admin_categories') }}">Категорії</a>
+            <a href="{{ url_for('admin_services') }}">Послуги</a>
+            <a href="{{ url_for('admin_prices') }}">Прайс</a>
+            <a class="active" href="{{ url_for('admin_reviews') }}">Відгуки</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Модерація</div><h1>Відгуки клієнтів</h1></div></div>
+            <div class="cards-grid two">
+                {% for review in reviews %}
+                    <article class="card review-card">
+                        <div class="card-head"><div><span class="badge badge-soft">#{{ review.order_number }}</span><h3>{{ review.service_name }}</h3></div><span class="badge {{ 'success' if review.is_visible else 'danger' }}">{{ 'Видимий' if review.is_visible else 'Прихований' }}</span></div>
+                        <div class="stars">{{ '★' * review.rating }}{{ '☆' * (5 - review.rating) }}</div>
+                        <p>{{ review.text }}</p>
+                        <small>{{ review.client_name }} → {{ review.worker_name or 'без виконавця' }} · {{ format_datetime(review.created_at) }}</small>
+                        <div class="form-actions mt-md">
+                            <form method="post" action="{{ url_for('admin_review_toggle', review_id=review.id) }}"><button class="btn btn-outline" type="submit">{{ 'Приховати' if review.is_visible else 'Показати' }}</button></form>
+                            <form method="post" action="{{ url_for('admin_review_delete', review_id=review.id) }}" onsubmit="return confirm('Видалити відгук?')"><button class="btn btn-danger" type="submit">Видалити</button></form>
+                        </div>
+                    </article>
+                {% else %}
+                    <div class="empty-state">Відгуків немає.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

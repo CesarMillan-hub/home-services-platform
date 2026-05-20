@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Мої замовлення · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Клієнт</h3>
+            <a href="{{ url_for('client_dashboard') }}">Огляд</a>
+            <a href="{{ url_for('client_profile') }}">Профіль</a>
+            <a href="{{ url_for('client_create_order') }}">Створити замовлення</a>
+            <a class="active" href="{{ url_for('client_orders') }}">Мої замовлення</a>
+            <a href="{{ url_for('client_reviews') }}">Відгуки</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Мої замовлення</div><h1>Список заявок</h1></div></div>
+            <form class="filter-bar" method="get">
+                <label>Статус
+                    <select name="status">
+                        <option value="">Усі</option>
+                        {% for status in order_statuses %}<option value="{{ status }}" {% if selected_status == status %}selected{% endif %}>{{ status }}</option>{% endfor %}
+                    </select>
+                </label>
+                <label>Сортування
+                    <select name="sort">
+                        <option value="new" {% if sort == 'new' %}selected{% endif %}>Нові спочатку</option>
+                        <option value="old" {% if sort == 'old' %}selected{% endif %}>Старі спочатку</option>
+                    </select>
+                </label>
+                <button class="btn btn-primary" type="submit">Фільтр</button>
+            </form>
+            <div class="table-card mt-lg">
+                <table>
+                    <thead><tr><th>ID</th><th>Послуга</th><th>Дата</th><th>Статус</th><th>Оплата</th><th>Виконавець</th><th>Ціна</th><th></th></tr></thead>
+                    <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>#{{ order.id }}</td>
+                            <td>{{ order.category_name }} · {{ order.service_name }}</td>
+                            <td>{{ format_datetime(order.preferred_at) }}</td>
+                            <td><span class="status-pill status-{{ status_class(order.status) }}">{{ order.status }}</span></td>
+                            <td>{% if order.is_paid %}<span class="badge success">Оплачено</span>{% else %}<span class="badge">Не оплачено</span>{% endif %}</td>
+                            <td>{{ order.worker_name or '—' }}</td>
+                            <td>{{ money(order.final_price or order.estimated_price) }}</td>
+                            <td><a href="{{ url_for('client_order_detail', order_id=order.id) }}">Деталі</a></td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="8" class="muted center">Немає замовлень за вибраним фільтром.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

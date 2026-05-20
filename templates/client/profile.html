@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Профіль клієнта · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Клієнт</h3>
+            <a href="{{ url_for('client_dashboard') }}">Огляд</a>
+            <a class="active" href="{{ url_for('client_profile') }}">Профіль</a>
+            <a href="{{ url_for('client_create_order') }}">Створити замовлення</a>
+            <a href="{{ url_for('client_orders') }}">Мої замовлення</a>
+            <a href="{{ url_for('client_reviews') }}">Відгуки</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Профіль</div><h1>Контакти та адреса</h1></div></div>
+            <form class="card form-card" method="post">
+                <div class="form-grid two">
+                    <label>ПІБ
+                        <input type="text" name="full_name" value="{{ current_user.full_name }}" required>
+                    </label>
+                    <label>Телефон
+                        <input type="tel" name="phone" value="{{ current_user.phone or '' }}">
+                    </label>
+                    <label>Місто
+                        <input type="text" name="city" value="{{ current_user.city or '' }}">
+                    </label>
+                    <label>Адреса за замовчуванням
+                        <input type="text" name="address" value="{{ current_user.address or '' }}">
+                    </label>
+                </div>
+                <button class="btn btn-primary" type="submit">Зберегти</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

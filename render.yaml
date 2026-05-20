@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: servicehub
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: flask --app app init-db && gunicorn app:app --config gunicorn.conf.py
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_PATH
+        value: /var/data/services.sqlite
+      - key: UPLOAD_DIR
+        value: /var/data/uploads
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: LIQPAY_PUBLIC_KEY
+        sync: false
+      - key: LIQPAY_PRIVATE_KEY
+        sync: false
+      - key: LIQPAY_SANDBOX
+        value: "0"
+    disk:
+      name: servicehub-data
+      mountPath: /var/data
+      sizeGB: 1

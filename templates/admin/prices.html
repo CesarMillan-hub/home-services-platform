@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Прайс · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Адмін</h3>
+            <a href="{{ url_for('admin_dashboard') }}">Дашборд</a>
+            <a href="{{ url_for('admin_orders') }}">Замовлення</a>
+            <a href="{{ url_for('admin_users') }}">Користувачі</a>
+            <a href="{{ url_for('admin_categories') }}">Категорії</a>
+            <a href="{{ url_for('admin_services') }}">Послуги</a>
+            <a class="active" href="{{ url_for('admin_prices') }}">Прайс</a>
+            <a href="{{ url_for('admin_reviews') }}">Відгуки</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Прайс</div><h1>Правила розрахунку</h1></div><a class="btn btn-primary" href="{{ url_for('admin_price_new') }}">Додати</a></div>
+            <div class="table-card">
+                <table>
+                    <thead><tr><th>ID</th><th>Послуга</th><th>База</th><th>Одиниця</th><th>Дод. опція</th><th>Терміново</th><th>Статус</th><th>Дії</th></tr></thead>
+                    <tbody>
+                    {% for price in prices %}
+                        <tr>
+                            <td>#{{ price.id }}</td><td>{{ price.category_name }} · {{ price.service_name }}</td><td>{{ money(price.base_price) }}</td><td>{{ money(price.unit_price) }} / {{ price.unit_name }}</td><td>{{ money(price.extra_option_price) }}</td><td>×{{ price.urgent_multiplier }}</td><td>{{ active_label(price.is_active) }}</td>
+                            <td class="actions-cell"><a class="btn btn-sm btn-outline" href="{{ url_for('admin_price_edit', price_id=price.id) }}">Редагувати</a><form method="post" action="{{ url_for('admin_price_delete', price_id=price.id) }}" onsubmit="return confirm('Видалити прайс?')"><button class="btn btn-sm btn-danger" type="submit">Видалити</button></form></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

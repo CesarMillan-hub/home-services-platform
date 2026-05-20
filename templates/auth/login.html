@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Вхід · ServiceHub{% endblock %}
+{% block content %}
+<section class="section auth-section">
+    <div class="container auth-grid">
+        <div class="auth-copy">
+            <div class="eyebrow">Авторизація</div>
+            <h1>Увійдіть у свій кабінет</h1>
+            <div class="auth-feature-list">
+                <div><span>01</span><strong>Замовлення</strong></div>
+                <div><span>02</span><strong>Статуси</strong></div>
+                <div><span>03</span><strong>Оплата</strong></div>
+            </div>
+        </div>
+        <form class="card form-card auth-card" method="post">
+            <label>Email
+                <input type="email" name="email" value="{{ email }}" required>
+            </label>
+            <label>Пароль
+                <input type="password" name="password" required>
+            </label>
+            <button class="btn btn-primary full" type="submit">Увійти</button>
+            <p class="center muted">Немає акаунта? <a href="{{ url_for('register') }}">Зареєструватися</a></p>
+        </form>
+    </div>
+</section>
+{% endblock %}

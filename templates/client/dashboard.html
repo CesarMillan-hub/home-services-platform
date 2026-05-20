@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Кабінет клієнта · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Клієнт</h3>
+            <a class="active" href="{{ url_for('client_dashboard') }}">Огляд</a>
+            <a href="{{ url_for('client_profile') }}">Профіль</a>
+            <a href="{{ url_for('client_create_order') }}">Створити замовлення</a>
+            <a href="{{ url_for('client_orders') }}">Мої замовлення</a>
+            <a href="{{ url_for('client_reviews') }}">Відгуки</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head">
+                <div>
+                    <div class="eyebrow">Кабінет клієнта</div>
+                    <h1>Вітаємо, {{ current_user.full_name }}</h1>
+                </div>
+                <a class="btn btn-primary" href="{{ url_for('client_create_order') }}">Нове замовлення</a>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card"><strong>{{ stats.all }}</strong><span>усі замовлення</span></div>
+                <div class="stat-card"><strong>{{ stats.active }}</strong><span>активні</span></div>
+                <div class="stat-card"><strong>{{ stats.done }}</strong><span>виконані</span></div>
+            </div>
+            <div class="card mt-lg">
+                <div class="card-head">
+                    <h2>Останні замовлення</h2>
+                    <a class="link-arrow" href="{{ url_for('client_orders') }}">Усі →</a>
+                </div>
+                <div class="table-card embedded">
+                    <table>
+                        <thead><tr><th>ID</th><th>Послуга</th><th>Статус</th><th>Виконавець</th><th>Ціна</th><th></th></tr></thead>
+                        <tbody>
+                        {% for order in recent_orders %}
+                            <tr>
+                                <td>#{{ order.id }}</td>
+                                <td>{{ order.category_name }} · {{ order.service_name }}</td>
+                                <td><span class="status-pill status-{{ status_class(order.status) }}">{{ order.status }}</span></td>
+                                <td>{{ order.worker_name or 'Не призначено' }}</td>
+                                <td>{{ money(order.final_price or order.estimated_price) }}</td>
+                                <td><a href="{{ url_for('client_order_detail', order_id=order.id) }}">Деталі</a></td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="6" class="muted center">Замовлень ще немає.</td></tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

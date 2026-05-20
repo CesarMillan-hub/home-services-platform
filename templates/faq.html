@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}FAQ · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container narrow">
+        <div class="section-head">
+            <div>
+                <div class="eyebrow">FAQ</div>
+                <h1>Питання та відповіді</h1>
+            </div>
+        </div>
+        <div class="accordion-list">
+            <details open class="card"><summary>Як створити замовлення?</summary><p>Оберіть категорію, підпослугу, адресу, дату, час і додайте деталі, які важливі для виконавця.</p></details>
+            <details class="card"><summary>Як рахується ціна?</summary><p>Сума формується з базової вартості послуги, обсягу роботи та додаткових параметрів.</p></details>
+            <details class="card"><summary>Коли можна оплатити?</summary><p>Оплата доступна після створення замовлення в особистому кабінеті клієнта.</p></details>
+            <details class="card"><summary>Чи можна залишити відгук?</summary><p>Після виконання замовлення клієнт може поставити оцінку та написати відгук.</p></details>
+        </div>
+    </div>
+</section>
+{% endblock %}

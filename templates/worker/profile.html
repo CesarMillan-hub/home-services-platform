@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Профіль виконавця · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Виконавець</h3>
+            <a href="{{ url_for('worker_dashboard') }}">Огляд</a>
+            <a class="active" href="{{ url_for('worker_profile') }}">Профіль</a>
+            <a href="{{ url_for('worker_available_orders') }}">Доступні заявки</a>
+            <a href="{{ url_for('worker_assigned_orders') }}">Призначені</a>
+            <a href="{{ url_for('worker_history') }}">Історія</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Профіль</div><h1>Дані виконавця</h1></div></div>
+            <form class="card form-card" method="post">
+                <div class="form-grid two">
+                    <label>ПІБ
+                        <input type="text" name="full_name" value="{{ current_user.full_name }}" required>
+                    </label>
+                    <label>Телефон
+                        <input type="tel" name="phone" value="{{ current_user.phone or '' }}">
+                    </label>
+                    <label>Місто
+                        <input type="text" name="city" value="{{ current_user.city or '' }}">
+                    </label>
+                    <label>Спеціалізація
+                        <select name="specialization" required>
+                            {% for value, label in specializations.items() %}
+                                <option value="{{ value }}" {% if current_user.specialization == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>Район / зона
+                        <input type="text" name="service_area" value="{{ current_user.service_area or '' }}">
+                    </label>
+                    <label>Графік
+                        <input type="text" name="schedule" value="{{ current_user.schedule or '' }}">
+                    </label>
+                    <label class="wide">Ціна / фікс-прайс
+                        <input type="text" name="price_text" value="{{ current_user.price_text or '' }}">
+                    </label>
+                </div>
+                <button class="btn btn-primary" type="submit">Зберегти</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

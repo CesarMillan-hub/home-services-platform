@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Доступні заявки · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Виконавець</h3>
+            <a href="{{ url_for('worker_dashboard') }}">Огляд</a>
+            <a href="{{ url_for('worker_profile') }}">Профіль</a>
+            <a class="active" href="{{ url_for('worker_available_orders') }}">Доступні заявки</a>
+            <a href="{{ url_for('worker_assigned_orders') }}">Призначені</a>
+            <a href="{{ url_for('worker_history') }}">Історія</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Доступні заявки</div><h1>{{ spec_label(current_user.specialization) }}</h1></div></div>
+            <form class="filter-bar" method="get">
+                <label>Статус
+                    <select name="status">
+                        <option value="">Усі нові</option>
+                        <option value="Нове" {% if selected_status == 'Нове' %}selected{% endif %}>Нове</option>
+                        <option value="Очікує підтвердження" {% if selected_status == 'Очікує підтвердження' %}selected{% endif %}>Очікує підтвердження</option>
+                    </select>
+                </label>
+                <button class="btn btn-primary" type="submit">Фільтр</button>
+            </form>
+            <div class="cards-grid two mt-lg">
+                {% for order in orders %}
+                    <article class="card order-card">
+                        <div class="card-head">
+                            <div><span class="badge badge-soft">#{{ order.id }}</span><h3>{{ order.service_name }}</h3></div>
+                            <span class="status-pill status-{{ status_class(order.status) }}">{{ order.status }}</span>
+                        </div>
+                        <p class="muted">{{ order.city }}, {{ order.street }}, {{ order.building }} · {{ format_datetime(order.preferred_at) }}</p>
+                        <p>{{ order.description or 'Без коментаря' }}</p>
+                        <div class="price-line"><span>Орієнтовно</span><strong>{{ money(order.estimated_price) }}</strong></div>
+                        <div class="form-actions">
+                            <a class="btn btn-outline" href="{{ url_for('worker_order_detail', order_id=order.id) }}">Деталі</a>
+                            <form method="post" action="{{ url_for('worker_accept_order', order_id=order.id) }}"><button class="btn btn-primary" type="submit">Прийняти</button></form>
+                            <form method="post" action="{{ url_for('worker_reject_order', order_id=order.id) }}"><button class="btn btn-danger" type="submit">Відхилити</button></form>
+                        </div>
+                    </article>
+                {% else %}
+                    <div class="empty-state">Доступних заявок за вашою спеціалізацією немає.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

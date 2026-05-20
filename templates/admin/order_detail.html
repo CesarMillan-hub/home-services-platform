@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% block title %}Адмін: замовлення #{{ order.id }} · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Адмін</h3>
+            <a href="{{ url_for('admin_dashboard') }}">Дашборд</a>
+            <a class="active" href="{{ url_for('admin_orders') }}">Замовлення</a>
+            <a href="{{ url_for('admin_users') }}">Користувачі</a>
+            <a href="{{ url_for('admin_categories') }}">Категорії</a>
+            <a href="{{ url_for('admin_services') }}">Послуги</a>
+            <a href="{{ url_for('admin_prices') }}">Прайс</a>
+            <a href="{{ url_for('admin_reviews') }}">Відгуки</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Керування замовленням</div><h1>#{{ order.id }} · {{ order.service_name }}</h1></div><a class="btn btn-outline" href="{{ url_for('admin_orders') }}">Назад</a></div>
+            <div class="detail-grid">
+                <div class="card spacious">
+                    <h2>Дані заявки</h2>
+                    <div class="info-list">
+                        <div><strong>Клієнт:</strong> {{ order.client_name }} · {{ order.client_phone or 'телефон не вказано' }}</div>
+                        <div><strong>Категорія:</strong> {{ order.category_name }}</div>
+                        <div><strong>Адреса:</strong> {{ order.city }}, {{ order.street }}, {{ order.building }}{% if order.apartment %}, кв. {{ order.apartment }}{% endif %}</div>
+                        <div><strong>Бажаний час:</strong> {{ format_datetime(order.preferred_at) }}</div>
+                        <div><strong>Коментар:</strong> {{ order.description or '—' }}</div>
+                        <div><strong>Створено:</strong> {{ format_datetime(order.created_at) }}</div>
+                    </div>
+                </div>
+                <form class="card form-card" method="post" action="{{ url_for('admin_update_order', order_id=order.id) }}">
+                    <h2>Редагування</h2>
+                    <label>Статус
+                        <select name="status">
+                            {% for status in order_statuses %}<option value="{{ status }}" {% if order.status == status %}selected{% endif %}>{{ status }}</option>{% endfor %}
+                        </select>
+                    </label>
+                    <label>Виконавець
+                        <select name="worker_id">
+                            <option value="">Не призначено</option>
+                            {% for worker in workers %}<option value="{{ worker.id }}" {% if order.worker_id == worker.id %}selected{% endif %}>{{ worker.full_name }} · {{ spec_label(worker.specialization) }}</option>{% endfor %}
+                        </select>
+                    </label>
+                    <label>Фінальна ціна
+                        <input type="number" step="0.01" name="final_price" value="{{ order.final_price if order.final_price is not none else '' }}">
+                    </label>
+                    <label class="check-line"><input type="checkbox" name="is_paid" value="1" {% if order.is_paid %}checked{% endif %}> Оплачено</label>
+                    <button class="btn btn-primary" type="submit">Зберегти зміни</button>
+                </form>
+            </div>
+
+            <div class="card mt-lg spacious">
+                <h2>Параметри ціни</h2>
+                <div class="info-list columns">
+                    <div><strong>Орієнтовна:</strong> {{ money(order.estimated_price) }}</div>
+                    <div><strong>Фінальна:</strong> {{ money(order.final_price) }}</div>
+                    <div><strong>Оплата:</strong> {% if order.is_paid %}Оплачено {{ format_datetime(order.paid_at) }}{% else %}Не оплачено{% endif %}</div>
+                    {% if order.category_slug == 'cleaning' %}
+                        <div><strong>Площа:</strong> {{ order.cleaning_area or '—' }} м²</div><div><strong>Кімнати:</strong> {{ order.rooms or '—' }}</div><div><strong>Опції:</strong> {{ order.extra_options or '—' }}</div>
+                    {% elif order.category_slug == 'repair' %}
+                        <div><strong>Тип роботи:</strong> {{ order.repair_type or '—' }}</div><div><strong>Години:</strong> {{ order.repair_hours or '—' }}</div><div><strong>Терміновість:</strong> {{ 'Терміново' if order.urgency == 'urgent' else 'Звичайно' }}</div>{% if order.photo_filename %}<div><strong>Фото:</strong> <a href="{{ url_for('uploaded_file', filename=order.photo_filename) }}" target="_blank">відкрити</a></div>{% endif %}
+                    {% elif order.category_slug == 'delivery' %}
+                        <div><strong>Звідки:</strong> {{ order.delivery_from or '—' }}</div><div><strong>Куди:</strong> {{ order.delivery_to or '—' }}</div><div><strong>Км:</strong> {{ order.delivery_distance_km or '—' }}</div><div><strong>Вага:</strong> {{ order.weight or '—' }} кг</div><div><strong>Габарити:</strong> {{ order.dimensions or '—' }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if payments %}
+            <div class="card mt-lg spacious">
+                <div class="card-head">
+                    <h2>Платежі</h2>
+                    {% if order.is_paid %}<span class="badge success">Оплачено</span>{% endif %}
+                </div>
+                <div class="table-card embedded">
+                    <table>
+                        <thead><tr><th>Провайдер</th><th>ID платежу</th><th>Сума</th><th>Статус</th><th>Дата</th></tr></thead>
+                        <tbody>
+                        {% for payment in payments %}
+                            <tr>
+                                <td>{{ payment.provider|upper }}</td>
+                                <td>{{ payment.provider_order_id }}</td>
+                                <td>{{ money(payment.amount) }} {{ payment.currency }}</td>
+                                <td><span class="badge {{ payment_status_class(payment.status) }}">{{ payment_status_label(payment.status) }}</span></td>
+                                <td>{{ format_datetime(payment.created_at) }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if review %}
+            <div class="card mt-lg spacious">
+                <h2>Відгук</h2>
+                <div class="stars">{{ '★' * review.rating }}{{ '☆' * (5 - review.rating) }}</div>
+                <p>{{ review.text }}</p>
+                <p class="muted">{{ 'Видимий' if review.is_visible else 'Прихований' }}</p>
+            </div>
+            {% endif %}
+
+            <div class="card mt-lg spacious">
+                <h2>Історія статусів</h2>
+                <div class="timeline">
+                    {% for item in history %}
+                        <div class="timeline-item"><strong>{{ item.status }}</strong><span>{{ format_datetime(item.created_at) }} · {{ item.user_name or 'Система' }}</span>{% if item.comment %}<p>{{ item.comment }}</p>{% endif %}</div>
+                    {% else %}<p class="muted">Історії немає.</p>{% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

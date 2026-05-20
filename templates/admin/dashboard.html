@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Адмін-панель · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Адмін</h3>
+            <a class="active" href="{{ url_for('admin_dashboard') }}">Дашборд</a>
+            <a href="{{ url_for('admin_orders') }}">Замовлення</a>
+            <a href="{{ url_for('admin_users') }}">Користувачі</a>
+            <a href="{{ url_for('admin_categories') }}">Категорії</a>
+            <a href="{{ url_for('admin_services') }}">Послуги</a>
+            <a href="{{ url_for('admin_prices') }}">Прайс</a>
+            <a href="{{ url_for('admin_reviews') }}">Відгуки</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Адмін-панель</div><h1>Статистика сервісу</h1></div></div>
+            <div class="stats-grid five">
+                <div class="stat-card"><strong>{{ stats.orders }}</strong><span>замовлень</span></div>
+                <div class="stat-card"><strong>{{ stats.new_orders }}</strong><span>нових</span></div>
+                <div class="stat-card"><strong>{{ stats.done }}</strong><span>виконано</span></div>
+                <div class="stat-card"><strong>{{ stats.users }}</strong><span>користувачів</span></div>
+                <div class="stat-card"><strong>{{ money(stats.revenue) }}</strong><span>оплачено</span></div>
+            </div>
+            <div class="detail-grid mt-lg">
+                <div class="card spacious">
+                    <h2>Популярні послуги</h2>
+                    <div class="table-card embedded">
+                        <table>
+                            <thead><tr><th>Послуга</th><th>Категорія</th><th>К-сть</th></tr></thead>
+                            <tbody>
+                            {% for row in popular_services %}
+                                <tr><td>{{ row.name }}</td><td>{{ row.category_name }}</td><td>{{ row.orders_count }}</td></tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card spacious">
+                    <h2>Останні замовлення</h2>
+                    <div class="timeline compact">
+                        {% for order in latest_orders %}
+                            <div class="timeline-item">
+                                <strong>#{{ order.id }} · {{ order.service_name }}</strong>
+                                <span>{{ order.client_name }} · {{ order.status }} · {{ format_datetime(order.created_at) }}</span>
+                                <a href="{{ url_for('admin_order_detail', order_id=order.id) }}">Відкрити</a>
+                            </div>
+                        {% else %}<p class="muted">Замовлень немає.</p>{% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

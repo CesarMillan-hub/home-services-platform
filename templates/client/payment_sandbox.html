@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Оплата замовлення #{{ order.id }} · ServiceHub{% endblock %}
+{% block content %}
+<section class="section payment-section">
+    <div class="container narrow">
+        <div class="card spacious payment-redirect-card payment-bank-card">
+            <div class="payment-brand-row">
+                <div>
+                    <div class="eyebrow">Оплата онлайн</div>
+                    <h1>Підтвердження платежу</h1>
+                </div>
+                <span class="badge success">UAH</span>
+            </div>
+            <div class="bank-card-preview">
+                <div class="bank-chip"></div>
+                <div class="bank-lines">
+                    <span></span><span></span><span></span>
+                </div>
+                <strong>•••• •••• •••• 4242</strong>
+            </div>
+            <div class="payment-summary">
+                <div><span>Замовлення</span><strong>#{{ order.id }}</strong></div>
+                <div><span>Послуга</span><strong>{{ order.service_name }}</strong></div>
+                <div><span>До сплати</span><strong>{{ money(amount) }}</strong></div>
+            </div>
+            <form method="post" action="{{ url_for('client_confirm_sandbox_payment', order_id=order.id, payment_id=payment_id) }}">
+                <button class="btn btn-primary btn-lg full" type="submit">Підтвердити оплату</button>
+            </form>
+            <a class="btn btn-outline full mt-sm" href="{{ url_for('client_order_detail', order_id=order.id) }}">Повернутися до замовлення</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

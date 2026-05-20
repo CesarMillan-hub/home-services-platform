@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Редагувати послугу' if service else 'Нова послуга' }} · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container narrow">
+        <div class="section-head"><div><div class="eyebrow">Послуга</div><h1>{{ 'Редагувати послугу' if service else 'Нова послуга' }}</h1></div><a class="btn btn-outline" href="{{ url_for('admin_services') }}">Назад</a></div>
+        <form class="card form-card" method="post">
+            <div class="form-grid two">
+                <label>Категорія
+                    <select name="category_id" required>
+                        {% for category in categories %}<option value="{{ category.id }}" {% if service and service.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>{% endfor %}
+                    </select>
+                </label>
+                <label>Назва<input type="text" name="name" value="{{ service.name if service else '' }}" required></label>
+                <label>Slug<input type="text" name="slug" value="{{ service.slug if service else '' }}"></label>
+                <label>Одиниця виміру<input type="text" name="unit_label" value="{{ service.unit_label if service else 'од.' }}"></label>
+            </div>
+            <label>Опис<textarea name="description" rows="4">{{ service.description if service else '' }}</textarea></label>
+            <label class="check-line"><input type="checkbox" name="is_active" value="1" {% if not service or service.is_active %}checked{% endif %}> Активна</label>
+            <button class="btn btn-primary" type="submit">Зберегти</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

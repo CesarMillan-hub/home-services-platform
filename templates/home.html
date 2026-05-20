@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% block title %}ServiceHub · Побутові послуги онлайн{% endblock %}
+{% block content %}
+<section class="hero hero-premium">
+    <div class="container hero-grid">
+        <div class="hero-copy">
+            <div class="eyebrow">Клінінг · Ремонт · Доставка</div>
+            <h1>Побутові послуги без зайвих дзвінків і пошуку майстрів.</h1>
+            <p>Оберіть послугу, вкажіть адресу та зручний час. ServiceHub покаже орієнтовну вартість, збере деталі замовлення та допоможе швидко знайти виконавця.</p>
+            <div class="hero-actions">
+                {% if current_user and current_user.role == 'client' %}
+                    <a class="btn btn-primary btn-lg" href="{{ url_for('client_create_order') }}">Замовити послугу</a>
+                {% else %}
+                    <a class="btn btn-primary btn-lg" href="{{ url_for('register') }}">Замовити послугу</a>
+                {% endif %}
+                <a class="btn btn-glass btn-lg" href="{{ url_for('catalog') }}">Переглянути каталог</a>
+            </div>
+            <div class="hero-metrics">
+                <div><strong>{{ stats.orders }}</strong><span>замовлення</span></div>
+                <div><strong>{{ stats.services }}</strong><span>послуг</span></div>
+                <div><strong>{{ stats.workers }}</strong><span>виконавці</span></div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="service-orbit orbit-one"></div>
+            <div class="service-orbit orbit-two"></div>
+            <div class="booking-card glass-card">
+                <div class="booking-top">
+                    <span class="badge badge-soft">Сьогодні</span>
+                    <strong>850 грн</strong>
+                </div>
+                <h3>Підтримуюче прибирання</h3>
+                <p>Ужгород · 45 м² · 2 кімнати</p>
+                <div class="status-track">
+                    <div class="is-complete"><span></span><strong>Заявку створено</strong></div>
+                    <div class="is-complete"><span></span><strong>Виконавця знайдено</strong></div>
+                    <div class="is-active"><span></span><strong>Робота виконується</strong></div>
+                    <div><span></span><strong>Оплата та відгук</strong></div>
+                </div>
+                <div class="booking-worker">
+                    <div class="worker-avatar sm">О</div>
+                    <div><strong>Олена Клименко</strong><span>Клінінг · рейтинг 5.0</span></div>
+                </div>
+            </div>
+            <div class="floating-card floating-card-left">
+                <span>Вартість</span>
+                <strong>видно до оформлення</strong>
+            </div>
+            <div class="floating-card floating-card-right">
+                <span>Оплата</span>
+                <strong>онлайн або після робіт</strong>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-tight">
+    <div class="container platform-strip">
+        <div><span>01</span><strong>Оберіть послугу</strong></div>
+        <div><span>02</span><strong>Вкажіть адресу</strong></div>
+        <div><span>03</span><strong>Побачте ціну</strong></div>
+        <div><span>04</span><strong>Отримайте результат</strong></div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <div class="eyebrow">Категорії</div>
+                <h2>Що можна замовити</h2>
+            </div>
+            <a class="link-arrow" href="{{ url_for('catalog') }}">Увесь каталог →</a>
+        </div>
+        <div class="cards-grid three service-showcase">
+            {% for category in categories %}
+                <article class="card service-category-card lift-card">
+                    <span class="category-icon">{% if category.slug == 'cleaning' %}🧹{% elif category.slug == 'repair' %}🔧{% elif category.slug == 'delivery' %}🚚{% else %}✨{% endif %}</span>
+                    <h3>{{ category.name }}</h3>
+                    <p>{{ category.description }}</p>
+                    <a class="btn btn-outline" href="{{ url_for('catalog', category=category.slug) }}">Вибрати</a>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section alt">
+    <div class="container feature-layout service-comfort">
+        <div>
+            <div class="eyebrow">Зручність</div>
+            <h2>Усе для дому, офісу та щоденних справ в одному місці.</h2>
+            <p class="muted">Не потрібно обдзвонювати десятки майстрів або домовлятися в месенджерах. У заявці зібрані послуга, адреса, час, параметри ціни, виконавець і статус виконання.</p>
+            <div class="feature-list customer-benefits">
+                <div><span>✓</span><strong>Зручний час</strong></div>
+                <div><span>✓</span><strong>Прозора вартість</strong></div>
+                <div><span>✓</span><strong>Перевірені виконавці</strong></div>
+                <div><span>✓</span><strong>Оплата онлайн</strong></div>
+            </div>
+        </div>
+        <div class="customer-preview card spacious">
+            <div class="card-head">
+                <h3>Ваше наступне замовлення</h3>
+                <span class="badge success">Підтверджено</span>
+            </div>
+            <div class="next-order-main">
+                <div class="icon-bubble">🧹</div>
+                <div>
+                    <strong>Клінінг квартири</strong>
+                    <span>Сьогодні · 15:30</span>
+                </div>
+            </div>
+            <div class="next-order-info">
+                <div><span>Адреса</span><strong>Ужгород, вул. Собранецька</strong></div>
+                <div><span>Виконавець</span><strong>Олена Клименко</strong></div>
+                <div><span>До сплати</span><strong>850 грн</strong></div>
+            </div>
+            <div class="clean-progress">
+                <span class="done"></span>
+                <span class="done"></span>
+                <span class="active"></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section standards-section">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <div class="eyebrow">Стандарти сервісу</div>
+                <h2>На що можна розраховувати</h2>
+            </div>
+        </div>
+        <div class="cards-grid four standards-grid">
+            <article class="card standard-card lift-card"><span>⏱</span><h3>Пунктуальність</h3><p>Заявка має дату, час і адресу, тому виконавець одразу бачить усі деталі.</p></article>
+            <article class="card standard-card lift-card"><span>💳</span><h3>Зручна оплата</h3><p>Після оформлення замовлення клієнт може оплатити послугу онлайн.</p></article>
+            <article class="card standard-card lift-card"><span>📌</span><h3>Контроль статусу</h3><p>У кабінеті видно, на якому етапі знаходиться замовлення.</p></article>
+            <article class="card standard-card lift-card"><span>⭐</span><h3>Оцінка якості</h3><p>Після виконання клієнт залишає оцінку та відгук про роботу.</p></article>
+        </div>
+    </div>
+</section>
+
+<section class="section alt soft-flow-section">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <div class="eyebrow">Процес</div>
+                <h2>Як проходить замовлення</h2>
+            </div>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card"><span>1</span><h3>Оформлення</h3><p>Оберіть категорію, підпослугу, адресу, дату та параметри для розрахунку.</p></div>
+            <div class="step-card"><span>2</span><h3>Підбір</h3><p>Виконавець приймає заявку, а клієнт бачить призначення в деталях замовлення.</p></div>
+            <div class="step-card"><span>3</span><h3>Виконання</h3><p>Статус оновлюється від нового замовлення до завершення робіт.</p></div>
+            <div class="step-card"><span>4</span><h3>Оплата</h3><p>Після підтвердження платежу замовлення отримує позначку “Оплачено”.</p></div>
+        </div>
+    </div>
+</section>
+
+{% if top_workers %}
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <div class="eyebrow">Виконавці</div>
+                <h2>Рейтинг спеціалістів</h2>
+            </div>
+        </div>
+        <div class="cards-grid three">
+            {% for worker in top_workers %}
+                <article class="card worker-rating-card lift-card">
+                    <div class="worker-avatar">{{ worker.full_name[:1] }}</div>
+                    <h3>{{ worker.full_name }}</h3>
+                    <p>{{ spec_label(worker.specialization) }}{% if worker.service_area %} · {{ worker.service_area }}{% endif %}</p>
+                    <div class="rating-row">
+                        <span class="stars">★</span>
+                        <strong>{{ '%.1f'|format(worker.avg_rating or 0) }}</strong>
+                        <span>{{ worker.reviews_count }} відгуків</span>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if reviews %}
+<section class="section alt">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <div class="eyebrow">Відгуки</div>
+                <h2>Що кажуть клієнти</h2>
+            </div>
+        </div>
+        <div class="cards-grid three">
+            {% for review in reviews %}
+                <article class="card review-card lift-card">
+                    <div class="stars">{{ '★' * review.rating }}{{ '☆' * (5 - review.rating) }}</div>
+                    <p>{{ review.text }}</p>
+                    <small>{{ review.client_name }} · {{ review.service_name }}</small>
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Тарифи · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="section-head">
+            <div>
+                <div class="eyebrow">Тарифи</div>
+                <h1>Ціни на популярні послуги</h1>
+            </div>
+        </div>
+        <div class="table-card">
+            <table>
+                <thead>
+                <tr>
+                    <th>Категорія</th>
+                    <th>Послуга</th>
+                    <th>База</th>
+                    <th>Розрахунок</th>
+                    <th>Додаткова опція</th>
+                    <th>Термінове замовлення</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for price in price_rows %}
+                    <tr>
+                        <td><span class="badge badge-soft">{{ price.category_name }}</span></td>
+                        <td>{{ price.service_name }}</td>
+                        <td>{{ money(price.base_price) }}</td>
+                        <td>{{ money(price.unit_price) }} / {{ price.unit_name }}</td>
+                        <td>{{ money(price.extra_option_price) }}</td>
+                        <td>×{{ price.urgent_multiplier }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

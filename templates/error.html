@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}{{ code }} · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container narrow">
+        <div class="card center error-card">
+            <div class="eyebrow">Помилка {{ code }}</div>
+            <h1>{{ message }}</h1>
+            <a class="btn btn-primary" href="{{ url_for('home') }}">На головну</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

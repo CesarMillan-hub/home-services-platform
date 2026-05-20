@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Оплата замовлення #{{ order.id }} · ServiceHub{% endblock %}
+{% block content %}
+<section class="section payment-section">
+    <div class="container narrow">
+        <div class="card spacious payment-redirect-card">
+            <div class="payment-loader" aria-hidden="true"></div>
+            <div class="eyebrow">Оплата онлайн</div>
+            <h1>Перехід до платіжної сторінки</h1>
+            <div class="payment-summary">
+                <div><span>Замовлення</span><strong>#{{ order.id }}</strong></div>
+                <div><span>Послуга</span><strong>{{ order.service_name }}</strong></div>
+                <div><span>До сплати</span><strong>{{ money(amount) }}</strong></div>
+            </div>
+            <form method="post" action="{{ checkout_url }}" accept-charset="utf-8">
+                <input type="hidden" name="data" value="{{ data }}">
+                <input type="hidden" name="signature" value="{{ signature }}">
+                <button class="btn btn-primary btn-lg full" type="submit">Перейти до оплати</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

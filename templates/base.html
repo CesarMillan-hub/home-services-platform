@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}ServiceHub{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a class="brand" href="{{ url_for('home') }}">
+            <span class="brand-mark">SH</span>
+            <span>ServiceHub</span>
+        </a>
+        <button class="nav-toggle" type="button" data-nav-toggle aria-label="Відкрити меню">☰</button>
+        <nav class="nav" data-nav>
+            <a href="{{ url_for('catalog') }}">Каталог</a>
+            <a href="{{ url_for('prices_public') }}">Тарифи</a>
+            <a href="{{ url_for('faq') }}">FAQ</a>
+            <a href="{{ url_for('contacts') }}">Контакти</a>
+            {% if current_user %}
+                {% if current_user.role == 'client' %}
+                    <a href="{{ url_for('client_dashboard') }}">Кабінет</a>
+                    <a class="btn btn-sm btn-primary" href="{{ url_for('client_create_order') }}">Замовити</a>
+                {% elif current_user.role == 'worker' %}
+                    <a href="{{ url_for('worker_dashboard') }}">Кабінет</a>
+                    <a href="{{ url_for('worker_available_orders') }}">Доступні заявки</a>
+                {% elif current_user.role == 'admin' %}
+                    <a href="{{ url_for('admin_dashboard') }}">Адмін-панель</a>
+                    <a href="{{ url_for('admin_orders') }}">Замовлення</a>
+                {% endif %}
+                <span class="nav-user">{{ current_user.full_name }}</span>
+                <a class="btn btn-sm btn-outline" href="{{ url_for('logout') }}">Вийти</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Вхід</a>
+                <a class="btn btn-sm btn-primary" href="{{ url_for('register') }}">Реєстрація</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
+
+<main class="page">
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-stack">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <div>
+            <strong>ServiceHub</strong>
+            <p>Онлайн-замовлення клінінгу, ремонту та доставки.</p>
+        </div>
+        <div class="footer-links">
+            <a href="{{ url_for('catalog') }}">Послуги</a>
+            <a href="{{ url_for('prices_public') }}">Ціни</a>
+            <a href="{{ url_for('contacts') }}">Підтримка</a>
+        </div>
+    </div>
+</footer>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

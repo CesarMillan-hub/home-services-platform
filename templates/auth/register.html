@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Реєстрація · ServiceHub{% endblock %}
+{% block content %}
+<section class="section auth-section">
+    <div class="container narrow">
+        <div class="section-head">
+            <div>
+                <div class="eyebrow">Реєстрація</div>
+                <h1>Створіть акаунт</h1>
+            </div>
+        </div>
+        <form class="card form-card" method="post" data-register-form>
+            <div class="form-grid two">
+                <label>Роль
+                    <select name="role" data-role-select required>
+                        <option value="client" {% if form.get('role', 'client') == 'client' %}selected{% endif %}>Клієнт</option>
+                        <option value="worker" {% if form.get('role') == 'worker' %}selected{% endif %}>Виконавець</option>
+                    </select>
+                </label>
+                <label>ПІБ
+                    <input type="text" name="full_name" value="{{ form.get('full_name', '') }}" required>
+                </label>
+                <label>Email
+                    <input type="email" name="email" value="{{ form.get('email', '') }}" required>
+                </label>
+                <label>Телефон
+                    <input type="tel" name="phone" value="{{ form.get('phone', '') }}">
+                </label>
+                <label>Місто
+                    <input type="text" name="city" value="{{ form.get('city', '') }}">
+                </label>
+                <label>Адреса клієнта
+                    <input type="text" name="address" value="{{ form.get('address', '') }}">
+                </label>
+                <label>Пароль
+                    <input type="password" name="password" required minlength="6">
+                </label>
+                <label>Повторіть пароль
+                    <input type="password" name="password_confirm" required minlength="6">
+                </label>
+            </div>
+            <div class="worker-only panel" data-worker-fields>
+                <h3>Дані виконавця</h3>
+                <div class="form-grid two">
+                    <label>Спеціалізація
+                        <select name="specialization">
+                            {% for value, label in specializations.items() %}
+                                <option value="{{ value }}" {% if form.get('specialization') == value %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>Район / зона роботи
+                        <input type="text" name="service_area" value="{{ form.get('service_area', '') }}">
+                    </label>
+                    <label>Графік
+                        <input type="text" name="schedule" value="{{ form.get('schedule', '') }}">
+                    </label>
+                    <label>Ціна / фікс-прайс
+                        <input type="text" name="price_text" value="{{ form.get('price_text', '') }}">
+                    </label>
+                </div>
+            </div>
+            <button class="btn btn-primary full" type="submit">Зареєструватися</button>
+            <p class="center muted">Уже маєте акаунт? <a href="{{ url_for('login') }}">Увійти</a></p>
+        </form>
+    </div>
+</section>
+{% endblock %}

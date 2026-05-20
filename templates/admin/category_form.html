@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Редагувати категорію' if category else 'Нова категорія' }} · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container narrow">
+        <div class="section-head"><div><div class="eyebrow">Категорія</div><h1>{{ 'Редагувати категорію' if category else 'Нова категорія' }}</h1></div><a class="btn btn-outline" href="{{ url_for('admin_categories') }}">Назад</a></div>
+        <form class="card form-card" method="post">
+            <div class="form-grid two">
+                <label>Назва<input type="text" name="name" value="{{ category.name if category else '' }}" required></label>
+                <label>Slug латиницею<input type="text" name="slug" value="{{ category.slug if category else '' }}"></label>
+            </div>
+            <label>Опис<textarea name="description" rows="4">{{ category.description if category else '' }}</textarea></label>
+            <label class="check-line"><input type="checkbox" name="is_active" value="1" {% if not category or category.is_active %}checked{% endif %}> Активна</label>
+            <button class="btn btn-primary" type="submit">Зберегти</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

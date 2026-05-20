@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Користувачі · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Адмін</h3>
+            <a href="{{ url_for('admin_dashboard') }}">Дашборд</a>
+            <a href="{{ url_for('admin_orders') }}">Замовлення</a>
+            <a class="active" href="{{ url_for('admin_users') }}">Користувачі</a>
+            <a href="{{ url_for('admin_categories') }}">Категорії</a>
+            <a href="{{ url_for('admin_services') }}">Послуги</a>
+            <a href="{{ url_for('admin_prices') }}">Прайс</a>
+            <a href="{{ url_for('admin_reviews') }}">Відгуки</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Користувачі</div><h1>Ролі та блокування</h1></div></div>
+            <form class="filter-bar" method="get">
+                <label>Пошук<input type="search" name="q" value="{{ q }}"></label>
+                <label>Роль
+                    <select name="role"><option value="">Усі</option>{% for value, label in roles.items() %}<option value="{{ value }}" {% if selected_role == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+                </label>
+                <button class="btn btn-primary" type="submit">Знайти</button>
+            </form>
+            <div class="table-card mt-lg">
+                <table>
+                    <thead><tr><th>ID</th><th>ПІБ</th><th>Email</th><th>Телефон</th><th>Роль</th><th>Статус</th><th>Дії</th></tr></thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>#{{ user.id }}</td>
+                            <td>{{ user.full_name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.phone or '—' }}</td>
+                            <td>
+                                <form method="post" action="{{ url_for('admin_change_role', user_id=user.id) }}" class="inline-form">
+                                    <select name="role">
+                                        {% for value, label in roles.items() %}<option value="{{ value }}" {% if user.role == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                                    </select>
+                                    <button class="btn btn-sm btn-outline" type="submit">OK</button>
+                                </form>
+                            </td>
+                            <td>{% if user.is_blocked %}<span class="badge danger">Заблоковано</span>{% else %}<span class="badge success">Активний</span>{% endif %}</td>
+                            <td>
+                                <form method="post" action="{{ url_for('admin_toggle_block', user_id=user.id) }}">
+                                    <button class="btn btn-sm {{ 'btn-primary' if user.is_blocked else 'btn-danger' }}" type="submit" {% if user.id == current_user.id %}disabled{% endif %}>{{ 'Розблок' if user.is_blocked else 'Блок' }}</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="7" class="muted center">Користувачів не знайдено.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

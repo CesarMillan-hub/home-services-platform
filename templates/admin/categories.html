@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Категорії · ServiceHub{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container dashboard-layout">
+        <aside class="side-card">
+            <h3>Адмін</h3>
+            <a href="{{ url_for('admin_dashboard') }}">Дашборд</a>
+            <a href="{{ url_for('admin_orders') }}">Замовлення</a>
+            <a href="{{ url_for('admin_users') }}">Користувачі</a>
+            <a class="active" href="{{ url_for('admin_categories') }}">Категорії</a>
+            <a href="{{ url_for('admin_services') }}">Послуги</a>
+            <a href="{{ url_for('admin_prices') }}">Прайс</a>
+            <a href="{{ url_for('admin_reviews') }}">Відгуки</a>
+        </aside>
+        <div class="dashboard-main">
+            <div class="section-head"><div><div class="eyebrow">Категорії</div><h1>Керування категоріями</h1></div><a class="btn btn-primary" href="{{ url_for('admin_category_new') }}">Додати</a></div>
+            <div class="table-card">
+                <table>
+                    <thead><tr><th>ID</th><th>Назва</th><th>Slug</th><th>Опис</th><th>Статус</th><th>Дії</th></tr></thead>
+                    <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td>#{{ category.id }}</td><td>{{ category.name }}</td><td>{{ category.slug }}</td><td>{{ category.description or '—' }}</td><td>{{ active_label(category.is_active) }}</td>
+                            <td class="actions-cell">
+                                <a class="btn btn-sm btn-outline" href="{{ url_for('admin_category_edit', category_id=category.id) }}">Редагувати</a>
+                                <form method="post" action="{{ url_for('admin_category_delete', category_id=category.id) }}" onsubmit="return confirm('Видалити або деактивувати категорію?')"><button class="btn btn-sm btn-danger" type="submit">Видалити</button></form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
